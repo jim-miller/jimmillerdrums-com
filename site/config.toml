@@ -8,6 +8,7 @@ build_search_index = false
 [extra]
 email = "contact@jimmillerdrums.com"
 social_media = [
-    { name = "Instagram", url = "#" },
-    { name = "YouTube", url = "#" }
+  { name = "Instagram", url = "https://instagram.com/jimmillerdrums" },
+  { name = "YouTube", url = "https://youtube.com/@jimmillerdrums" },
+  { name = "Bluesky", url = "https://bsky.app/profile/drumjimdrum.bsky.social" }
 ]
