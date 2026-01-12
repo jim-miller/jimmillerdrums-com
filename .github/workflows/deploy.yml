@@ -1,32 +1,65 @@
 name: Deploy Website
+
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    # Setting defaults makes the steps cleaner
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Zola
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Setup Zola
         uses: taiki-e/install-action@v2
         with:
-          tool: zola
+          tool: zola@0.19.1 # Updated to latest stable
 
-      - name: Build Website
-        run: zola build
-        working-directory: ./site
-
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy to S3
-        run: aws s3 sync site/public/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+      # 1. Apply Infrastructure Changes
+      - name: OpenTofu Init & Apply
+        working-directory: ./infra
+        run: |
+          tofu init
+          tofu apply -auto-approve
 
+      # 2. Extract Outputs (The "Clean" way to get IDs)
+      - name: Get Infra Outputs
+        id: infra
+        working-directory: ./infra
+        run: |
+          echo "DIST_ID=$(tofu output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          echo "BUCKET_NAME=$(tofu output -raw s3_bucket_name)" >> $GITHUB_OUTPUT
+
+      # 3. Build the Zola Site
+      - name: Build site
+        working-directory: ./site
+        run: zola build
+
+      # 4. Sync Files to S3
+      - name: Sync to S3
+        run: |
+          aws s3 sync ./site/public/ s3://${{ steps.infra.outputs.BUCKET_NAME }} --delete
+
+      # 5. Invalidate CloudFront (Using the ID from Tofu)
       - name: Invalidate CloudFront
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_ID }} --paths "/*"
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ steps.infra.outputs.DIST_ID }} \
+            --paths "/*"
