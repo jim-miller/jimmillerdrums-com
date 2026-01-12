@@ -22,7 +22,7 @@ resource "aws_iam_policy" "github_actions_deployment" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      # Website S3 bucket content management
+      # S3 Website Bucket - Content Management
       {
         Effect = "Allow"
         Action = [
@@ -36,94 +36,126 @@ resource "aws_iam_policy" "github_actions_deployment" {
           "${aws_s3_bucket.website.arn}/*"
         ]
       },
-      # S3 bucket configuration management
+      # S3 Website Bucket - Configuration Management
       {
         Effect = "Allow"
         Action = [
-          "s3:GetAccelerateConfiguration",
           "s3:GetBucket*",
+          "s3:PutBucket*",
+          "s3:GetAccelerateConfiguration",
           "s3:GetEncryptionConfiguration",
-          "s3:GetLifecycleConfiguration",
-          "s3:GetPublicAccessBlock",
           "s3:GetVersioning",
-          "s3:PutBucket*"
+          "s3:PutBucketVersioning",
+          "s3:GetPublicAccessBlock",
+          "s3:PutPublicAccessBlock",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPolicy",
+          "s3:DeleteBucketPolicy",
+          "s3:GetReplicationConfiguration",
+          "s3:PutReplicationConfiguration",
+          "s3:GetBucketTagging",
+          "s3:PutBucketTagging",
+          "s3:GetLifecycleConfiguration"
         ]
         Resource = aws_s3_bucket.website.arn
       },
-      # CloudFront management
-      {
-        Effect = "Allow"
-        Action = [
-          "cloudfront:CreateInvalidation",
-          "cloudfront:GetDistribution",
-          "cloudfront:GetInvalidation",
-          "cloudfront:GetOriginAccessControl",
-          "cloudfront:TagResource",
-          "cloudfront:UpdateDistribution"
-        ]
-        Resource = "*"
-      },
-      # ACM certificate access
-      {
-        Effect = "Allow"
-        Action = [
-          "acm:DescribeCertificate",
-          "acm:ListCertificates",
-          "acm:ListTagsForCertificate"
-        ]
-        Resource = "*"
-      },
-      # Route53 access
-      {
-        Effect = "Allow"
-        Action = [
-          "route53:GetHostedZone",
-          "route53:ListHostedZones",
-          "route53:ListResourceRecordSets",
-          "route53:ListTagsForResource"
-        ]
-        Resource = "*"
-      },
-      # IAM read access for self-management
-      {
-        Effect = "Allow"
-        Action = [
-          "iam:GetPolicy",
-          "iam:GetUser",
-          "iam:GetUserPolicy",
-          "iam:ListAccessKeys",
-          "iam:ListAttachedUserPolicies"
-        ]
-        Resource = [
-          "arn:aws:iam::*:user/github-actions-*",
-          "arn:aws:iam::*:policy/GitHubActionsDeploymentPolicy-*"
-        ]
-      },
-      # State bucket access
+      # S3 State Bucket - Backend Operations
       {
         Effect = "Allow"
         Action = [
           "s3:ListBucket",
           "s3:GetObject",
-          "s3:PutObject"
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:PutObjectTagging"
         ]
         Resource = [
           data.aws_s3_bucket.terraform_state.arn,
           "${data.aws_s3_bucket.terraform_state.arn}/*"
         ]
       },
-      # DynamoDB state locking
+      # DynamoDB State Locking - Backend Operations
       {
         Effect = "Allow"
         Action = [
-          "dynamodb:DeleteItem",
-          "dynamodb:DescribeContinuousBackups",
           "dynamodb:DescribeTable",
+          "dynamodb:DescribeContinuousBackups",
           "dynamodb:DescribeTimeToLive",
           "dynamodb:GetItem",
-          "dynamodb:PutItem"
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:ListTagsOfResource",
+          "dynamodb:TagResource",
+          "dynamodb:UntagResource"
         ]
         Resource = data.aws_dynamodb_table.terraform_locks.arn
+      },
+      # CloudFront Management
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:GetDistribution",
+          "cloudfront:UpdateDistribution",
+          "cloudfront:GetOriginAccessControl",
+          "cloudfront:UpdateOriginAccessControl",
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetInvalidation",
+          "cloudfront:ListInvalidations",
+          "cloudfront:TagResource",
+          "cloudfront:UntagResource",
+          "cloudfront:ListTagsForResource"
+        ]
+        Resource = "*"
+      },
+      # ACM Certificate Management
+      {
+        Effect = "Allow"
+        Action = [
+          "acm:DescribeCertificate",
+          "acm:ListCertificates",
+          "acm:RequestCertificate",
+          "acm:AddTagsToCertificate",
+          "acm:ListTagsForCertificate"
+        ]
+        Resource = "*"
+      },
+      # Route53 DNS Management
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ListHostedZones",
+          "route53:GetHostedZone",
+          "route53:ListResourceRecordSets",
+          "route53:ChangeResourceRecordSets",
+          "route53:GetChange",
+          "route53:ListTagsForResource"
+        ]
+        Resource = "*"
+      },
+      # IAM Self-Management
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:GetUser",
+          "iam:GetPolicy",
+          "iam:GetUserPolicy",
+          "iam:ListAttachedUserPolicies",
+          "iam:ListAccessKeys",
+          "iam:GetAccessKeyLastUsed",
+          "iam:CreateAccessKey",
+          "iam:UpdateAccessKey",
+          "iam:DeleteAccessKey",
+          "iam:AttachUserPolicy",
+          "iam:DetachUserPolicy",
+          "iam:TagUser",
+          "iam:UntagUser",
+          "iam:TagPolicy",
+          "iam:UntagPolicy"
+        ]
+        Resource = [
+          "arn:aws:iam::*:user/github-actions-*",
+          "arn:aws:iam::*:policy/GitHubActionsDeploymentPolicy-*"
+        ]
       }
     ]
   })
