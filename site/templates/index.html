@@ -1,8 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<main class="flex min-h-screen flex-col items-center justify-center">
-    <h1 class="text-4xl font-bold tracking-tighter uppercase">Jim Miller</h1>
-    <p class="text-zinc-500 mt-2">{{ config.description }}</p>
-</main>
+<section class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-24">
+    <header class="mb-24">
+        <h1 class="text-[13vw] sm:text-7xl md:text-9xl font-black tracking-tighter uppercase leading-none whitespace-nowrap">
+            Jim Miller<span class="text-zinc-700">.</span>
+        </h1>
+        <p class="text-[4.2vw] sm:text-2xl font-mono text-zinc-400 mt-4 uppercase tracking-widest whitespace-nowrap">
+            NYC Session & Live Drummer
+        </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {{ section.content | safe }}
+    </div>
+
+    <footer class="mt-32 border-t border-zinc-800 pt-12">
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8">
+            <div>
+                <h2 class="text-2xl font-bold uppercase mb-4">Inquiries</h2>
+                <a href="mailto:{{ config.extra.email }}" 
+                  class="text-[7vw] sm:text-4xl font-mono whitespace-nowrap hover:text-zinc-400 transition-colors leading-none block">
+                    {{ config.extra.email }}
+                </a>
+            </div>
+            <div class="flex gap-6 font-mono uppercase text-sm tracking-widest text-zinc-500">
+                {% for social in config.extra.social_media %}
+                    <a href="{{ social.url }}" class="hover:text-white">{{ social.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </footer>
+</section>
 {% endblock content %}
