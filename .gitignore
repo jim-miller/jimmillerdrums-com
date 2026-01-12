@@ -1,3 +1,12 @@
+# Zola build output
+public/
+
+# OpenTofu/Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -7,3 +16,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Node modules (if using any JS tools)
+node_modules/
+
+# Logs
+*.log
