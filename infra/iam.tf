@@ -22,7 +22,7 @@ resource "aws_iam_policy" "github_actions_deployment" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      # 1. Manage the Website Bucket content (Syncing files)
+      # Website S3 bucket content management
       {
         Effect = "Allow"
         Action = [
@@ -36,19 +36,70 @@ resource "aws_iam_policy" "github_actions_deployment" {
           "${aws_s3_bucket.website.arn}/*"
         ]
       },
-      # 2. Manage the Infrastructure settings (tofu apply)
+      # S3 bucket configuration management
       {
         Effect = "Allow"
         Action = [
+          "s3:GetAccelerateConfiguration",
           "s3:GetBucket*",
-          "s3:PutBucket*",
-          "cloudfront:GetDistribution",
-          "cloudfront:UpdateDistribution",
-          "cloudfront:TagResource"
+          "s3:GetEncryptionConfiguration",
+          "s3:GetLifecycleConfiguration",
+          "s3:GetPublicAccessBlock",
+          "s3:GetVersioning",
+          "s3:PutBucket*"
         ]
-        Resource = "*" # Actions like 'ListDistributions' require "*"
+        Resource = aws_s3_bucket.website.arn
       },
-      # 3. Access the State Bucket (External resource from bootstrap)
+      # CloudFront management
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetDistribution",
+          "cloudfront:GetInvalidation",
+          "cloudfront:GetOriginAccessControl",
+          "cloudfront:TagResource",
+          "cloudfront:UpdateDistribution"
+        ]
+        Resource = "*"
+      },
+      # ACM certificate access
+      {
+        Effect = "Allow"
+        Action = [
+          "acm:DescribeCertificate",
+          "acm:ListCertificates",
+          "acm:ListTagsForCertificate"
+        ]
+        Resource = "*"
+      },
+      # Route53 access
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:GetHostedZone",
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets",
+          "route53:ListTagsForResource"
+        ]
+        Resource = "*"
+      },
+      # IAM read access for self-management
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:GetPolicy",
+          "iam:GetUser",
+          "iam:GetUserPolicy",
+          "iam:ListAccessKeys",
+          "iam:ListAttachedUserPolicies"
+        ]
+        Resource = [
+          "arn:aws:iam::*:user/github-actions-*",
+          "arn:aws:iam::*:policy/GitHubActionsDeploymentPolicy-*"
+        ]
+      },
+      # State bucket access
       {
         Effect = "Allow"
         Action = [
@@ -61,25 +112,18 @@ resource "aws_iam_policy" "github_actions_deployment" {
           "${data.aws_s3_bucket.terraform_state.arn}/*"
         ]
       },
-      # 4. DynamoDB State Locking (External resource from bootstrap)
+      # DynamoDB state locking
       {
         Effect = "Allow"
         Action = [
+          "dynamodb:DeleteItem",
+          "dynamodb:DescribeContinuousBackups",
           "dynamodb:DescribeTable",
+          "dynamodb:DescribeTimeToLive",
           "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
+          "dynamodb:PutItem"
         ]
         Resource = data.aws_dynamodb_table.terraform_locks.arn
-      },
-      # 5. Invalidation permissions
-      {
-        Effect = "Allow"
-        Action = [
-          "cloudfront:CreateInvalidation",
-          "cloudfront:GetInvalidation"
-        ]
-        Resource = "*"
       }
     ]
   })
