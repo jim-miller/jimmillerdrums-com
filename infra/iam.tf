@@ -1,13 +1,23 @@
 # IAM user for GitHub Actions deployment
 resource "aws_iam_user" "github_actions" {
-  name = "github-actions-${var.domain_name}"
+  name = "github-actions-${var.domain_name}-${var.environment}"
   path = "/"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.domain_name
+  }
 }
 
 # IAM policy for deployment permissions
 resource "aws_iam_policy" "github_actions_deployment" {
-  name        = "GitHubActionsDeploymentPolicy"
+  name        = "GitHubActionsDeploymentPolicy-${var.environment}"
   description = "Policy for GitHub Actions to deploy website and manage infra"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.domain_name
+  }
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -38,7 +48,7 @@ resource "aws_iam_policy" "github_actions_deployment" {
         ]
         Resource = "*" # Actions like 'ListDistributions' require "*"
       },
-      # 3. Access the State Bucket (Hardcoded because it's external to this config)
+      # 3. Access the State Bucket (External resource from bootstrap)
       {
         Effect = "Allow"
         Action = [
@@ -47,11 +57,22 @@ resource "aws_iam_policy" "github_actions_deployment" {
           "s3:PutObject"
         ]
         Resource = [
-          "arn:aws:s3:::jimmillerdrums-terraform-state",
-          "arn:aws:s3:::jimmillerdrums-terraform-state/*"
+          data.aws_s3_bucket.terraform_state.arn,
+          "${data.aws_s3_bucket.terraform_state.arn}/*"
         ]
       },
-      # 4. Invalidation permissions
+      # 4. DynamoDB State Locking (External resource from bootstrap)
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:DescribeTable",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = data.aws_dynamodb_table.terraform_locks.arn
+      },
+      # 5. Invalidation permissions
       {
         Effect = "Allow"
         Action = [
