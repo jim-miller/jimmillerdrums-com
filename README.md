@@ -1,24 +1,25 @@
 # JimMillerDrums.com
 
-Professional drummer in New York City. Focused on groove, reliability, and
+Professional drummer and in New York City. Focused on groove, reliability, and
 helping the band sound better.
 
-This repository contains the source code and infrastructure for my personal
-site. I built this to have a fast, minimalist digital presence that stays out
-of the way and lets the music speak for itself.
+This project is a "Monorepo" containing both the static site source and the
+cloud infrastructure required to host it. As a backend engineer, I wanted
+to build a production-grade pipeline that is secure, cost-effective
+(approx. $0.50/mo), and fully automated.
 
-## The Goal
+## 🏗 Architecture
 
-In the NYC music scene, a website is a digital business card. It needs to:
+The site uses a "Zero Public S3" posture. Traffic is served via CloudFront
+using **Origin Access Control (OAC)** to ensure the S3 bucket remains private.
 
-1. Load instantly on a phone (often on the subway).
-2. Showcase high-quality audio and video.
-3. Be simple to maintain so I can get back to practicing.
+```mermaid
+graph TD
+    User((User)) -->|HTTPS| CF[AWS CloudFront]
+    CF -->|OAC Auth| S3[(S3 Private Bucket)]
+    Route53[Route 53 DNS] -.-> CF
+    ACM[ACM SSL Cert] -.-> CF
+    GA[GitHub Actions] -->|Tofu Apply| CF
+    GA -->|S3 Sync| S3
+```
 
-## Tech Stack (The "Under the Hood" for the curious)
-
-- **SSG:** [Zola](https://getzola.org) (Built in Rust)
-- **Infrastructure:** OpenTofu (AWS S3 + CloudFront)
-- **Deployment:** GitHub Actions
-
-_Currently under construction._
