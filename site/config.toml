@@ -1,0 +1,13 @@
+base_url = "https://jimmillerdrums.com"
+title = "Jim Miller Drums"
+description = "NYC Session & Live Drummer"
+default_language = "en"
+compile_sass = false
+build_search_index = false
+
+[extra]
+email = "contact@jimmillerdrums.com"
+social_media = [
+    { name = "Instagram", url = "#" },
+    { name = "YouTube", url = "#" }
+]
