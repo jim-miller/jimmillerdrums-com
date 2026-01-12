@@ -138,9 +138,11 @@ resource "aws_iam_policy" "github_actions_deployment" {
         Action = [
           "iam:GetUser",
           "iam:GetPolicy",
+          "iam:GetPolicyVersion",
           "iam:GetUserPolicy",
           "iam:ListAttachedUserPolicies",
           "iam:ListAccessKeys",
+          "iam:ListPolicyVersions",
           "iam:GetAccessKeyLastUsed",
           "iam:CreateAccessKey",
           "iam:UpdateAccessKey",

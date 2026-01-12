@@ -29,10 +29,6 @@ resource "aws_cloudfront_distribution" "website" {
     viewer_protocol_policy = "redirect-to-https"
 
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
-
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
   }
 
   price_class = "PriceClass_100"
