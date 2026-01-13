@@ -12,3 +12,7 @@ social_media = [
   { name = "YouTube", url = "https://youtube.com/@jimmillerdrums" },
   { name = "Bluesky", url = "https://bsky.app/profile/drumjimdrum.bsky.social" }
 ]
+status_enabled = true
+status_text = "currently rehearsing // new material"
+status_color_class = "bg-[#2563EB]"
+status_text_class = "text-zinc-500"
