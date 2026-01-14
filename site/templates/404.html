@@ -1,0 +1,93 @@
+{% extends "index.html" %} {% block content %}
+<style>
+  @keyframes glitch {
+    0% {
+      transform: translate(0);
+      text-shadow: none;
+    }
+    20% {
+      transform: translate(-2px, 2px);
+      text-shadow: 2px 0 #333;
+    }
+    40% {
+      transform: translate(-2px, -2px);
+      opacity: 0.8;
+    }
+    60% {
+      transform: translate(2px, 2px);
+      text-shadow: -2px 0 #555;
+    }
+    80% {
+      transform: translate(2px, -2px);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(0);
+    }
+  }
+
+  .animate-glitch {
+    animation: glitch 3s infinite linear alternate-reverse;
+  }
+</style>
+
+<main
+  class="min-h-[85vh] flex flex-col justify-center items-start px-6 overflow-hidden"
+>
+  <h1
+    class="animate-glitch text-[clamp(5rem,24vw,18rem)] font-mono leading-[0.8] tracking-tighter text-zinc-900 select-none"
+  >
+    404
+  </h1>
+
+  <div class="max-w-2xl mt-4 relative z-10">
+    <h2
+      id="error-header"
+      class="text-xs font-mono uppercase tracking-[0.2em] text-zinc-500 mb-6"
+    >
+      [System Error]: Initializing...
+    </h2>
+
+    <p class="text-xl md:text-3xl font-mono leading-tight mb-12">
+      Flam! Looks like you've hit a ruff patch. What a drag...
+    </p>
+
+    <a
+      href="/"
+      class="inline-block border border-white px-8 py-4 font-mono uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all group"
+    >
+      <span class="inline-block transition-transform group-hover:-translate-x-1"
+        >←</span
+      >
+      Roll Back Home
+    </a>
+  </div>
+
+  <script>
+    const rudiments = [
+      "DOUBLE_STROKE_ROLL_INTERRUPTED",
+      "FLAM_ACCENT_AWOL",
+      "FLAM_BE_GONE",
+      "FLAMACUE_FAILURE",
+      "INVERTED_FLAM_TAP_UNRESOLVED",
+      "LESSON_25_LACKING",
+      "PARADIDDLE_NOT_FOUND",
+      "PATAFLAFLA_TIMEOUT",
+      "RATAMACUE_DROPPED",
+      "SINGLE_DRAG_TAP_ERROR",
+      "SINGLE_FLAMMED_MILL_MISSING",
+      "SINGLE_STROKE_ROLL_UH_OH",
+      "SINGLE_STROKE_FOUR_FORGOTTEN",
+      "SIX_STROKE_ROLL_CORRUPT",
+      "SWISS_ARMY_TRIPLET_TRUANT",
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const header = document.getElementById("error-header");
+      const randomRudiment =
+        rudiments[Math.floor(Math.random() * rudiments.length)];
+      header.textContent = `[System Error]: ${randomRudiment}`;
+    });
+  </script>
+</main>
+{% endblock content %}

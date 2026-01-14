@@ -1,0 +1,13 @@
+# jimmillerdrums.com
+# ------------------
+# [User-agent: *] applies to all crawlers
+
+User-agent: *
+Allow: /
+
+# Block technical/temporary directories
+Disallow: /temp/
+Disallow: /drafts/
+Disallow: /private/
+
+Sitemap: {{ config.base_url }}/sitemap.xml
