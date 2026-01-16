@@ -11,10 +11,10 @@
         </p>
 
         {% if config.extra.status_enabled %}
-        <div class="mt-6 flex items-center gap-3 font-mono text-xs tracking-widest uppercase {{ config.extra.status_text_class }}">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full {{ config.extra.status_color_class }} opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 {{ config.extra.status_color_class }}"></span>
+        <div class="mt-6 flex items-center gap-2 font-mono text-xs tracking-widest uppercase {{ config.extra.status_text_class }}">
+            <span class="relative flex size-2">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full {{ config.extra.status_color_class }} opacity-75"></span>
+                <span class="relative inline-flex size-2 rounded-full {{ config.extra.status_color_class }}"></span>
             </span>
             <span>{{ config.extra.status_text }}</span>
         </div>
@@ -30,21 +30,30 @@
             <div class="max-w-full">
                 <h2 class="text-xs font-mono uppercase tracking-[0.2em] text-zinc-500 mb-4">Inquiries</h2>
                 <a href="mailto:{{ config.extra.email }}" 
-                  class="text-[min(5.8vw,36px)] font-mono hover:text-zinc-400 transition-colors leading-none block">
+                  class="text-[min(5.5vw,36px)] font-mono hover:text-zinc-400 transition-colors leading-none block">
                     {{ config.extra.email }}
                 </a>
             </div>
             <div class="flex flex-wrap gap-x-8 gap-y-6">
                 {% for social in config.extra.social_media %}
-                <a href="{{ social.url }}" class="group flex items-center gap-3 text-zinc-500 hover:text-white transition-colors">
-                    <span class="w-6 h-6 flex items-center justify-center">
-                        <svg class="w-5 h-5 fill-current opacity-70 group-hover:opacity-100 transition-opacity" 
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="{{ social.icon_path }}"/>
-                        </svg>
-                    </span>
-                    <span class="font-mono uppercase text-xs tracking-widest">{{ social.name }}</span>
-                </a>
+                  <a href="{{ social.url }}" class="group relative flex items-center gap-2 text-zinc-500">
+                      <span class="relative size-6 flex items-center justify-center">
+                          <svg class="absolute size-5 fill-[#00ffff] opacity-0 group-hover:animate-glitch-cyan pointer-events-none" viewBox="0 0 24 24">
+                              <path d="{{ social.icon_path }}"/>
+                          </svg>
+
+                          <svg class="absolute size-5 fill-[#ff00ff] opacity-0 group-hover:animate-glitch-magenta pointer-events-none" viewBox="0 0 24 24">
+                              <path d="{{ social.icon_path }}"/>
+                          </svg>
+
+                          <svg class="relative size-5 fill-current opacity-70 transition-all duration-300 group-hover:opacity-100 {{ social.hover_color }} group-hover:text-white" viewBox="0 0 24 24">
+                              <path d="{{ social.icon_path }}"/>
+                          </svg>
+                      </span>
+                      <span class="font-mono text-xs uppercase tracking-tighter transition-colors group-hover:text-white">
+                          {{ social.name }}
+                      </span>
+                  </a>
                 {% endfor %}
             </div>
         </div>

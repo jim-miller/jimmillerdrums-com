@@ -1,0 +1,53 @@
+os := os()
+arch := arch()
+
+platform := if os == "macos" { "macos" } \
+            else if os == "linux" { "linux" } \
+            else if os == "windows" { "windows" } \
+            else { error("Unsupported OS") }
+
+target_arch := if arch == "aarch64" { "arm64" } \
+               else if arch == "x86_64" { "x64" } \
+               else { error("Unsupported architecture") }
+
+platform_arch := if arch() == "aarch64" { "arm64" } else { "x64" }
+
+binary_name := "tailwindcss-" + platform + "-" + target_arch
+tw_bin := "./tailwindcss"
+css_input := "css/input.css"
+css_output := "static/css/styles.css"
+
+# Default command: show recipes
+default:
+    @just --list
+
+# Start development helper/watchers
+[parallel]
+dev: serve watch-tw
+
+watch-tw:
+    @echo "Watching for Tailwind changes ({{binary_name}})"
+    {{tw_bin}} -i {{css_input}} -o {{css_output}} --watch
+
+serve:
+    @echo "Starting zola server"
+    zola serve
+
+# One-time build for production
+build:
+    @echo "Building production assets..."
+    # If the binary doesn't exist (e.g., in CI), download it first
+    @if [ ! -f {{tw_bin}} ]; then just update-tw; fi
+    {{tw_bin}} -i {{css_input}} -o {{css_output}} --minify
+    zola build
+
+# Clean up build artifacts
+clean:
+    rm -rf public {{css_output}}
+
+# Update the standalone Tailwind binary
+update-tw:
+    @echo "Downloading Tailwind for {{platform}} ({{target_arch}})..."
+    curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/{{binary_name}}
+    chmod +x {{binary_name}}
+    mv {{binary_name}} {{tw_bin}}
