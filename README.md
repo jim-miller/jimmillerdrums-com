@@ -1,3 +1,5 @@
+[![Deploy Website](https://github.com/jim-miller/jimmillerdrums-com/actions/workflows/deploy.yml/badge.svg)](https://github.com/jim-miller/jimmillerdrums-com/actions/workflows/deploy.yml)
+
 # JimMillerDrums.com
 
 Professional drummer and in New York City. Focused on groove, reliability, and
