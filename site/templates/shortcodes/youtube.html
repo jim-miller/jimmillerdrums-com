@@ -1,8 +1,8 @@
 <div
-  class="relative w-full aspect-video mb-6 border border-zinc-800 bg-zinc-900 group"
+  class="video-wrapper relative w-full aspect-video mb-6 border border-zinc-800 bg-zinc-900 group"
 >
   <iframe
-    class="absolute inset-0 w-full h-full grayscale hover:grayscale-0 transition-all duration-500"
+    class="absolute inset-0 w-full h-full"
     src="https://www.youtube-nocookie.com/embed/{{id}}"
     title="YouTube video player"
     frameborder="0"
@@ -17,5 +17,5 @@
     allowfullscreen
   >
   </iframe>
+  <div class="video-touch-overlay absolute inset-0 z-10 md:hidden"> </div>
 </div>
-

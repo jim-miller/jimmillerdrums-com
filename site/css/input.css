@@ -4,6 +4,7 @@
   /* Define animations as CSS variables */
   --animate-glitch-cyan: glitch-cyan 1.0s cubic-bezier(0.19, 1, 0.22, 1) forwards;
   --animate-glitch-magenta: glitch-magenta 0.75s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  --animate-pulse-burst: pulse-burst 0.5s ease-out;
 
   /* Define the keyframes directly in the theme block */
   @keyframes glitch-cyan {
@@ -16,4 +17,29 @@
     20% { transform: translate(-2px, 1px); opacity: 0.8; }
     100% { transform: translate(0, 0); opacity: 0; }
   }
+}
+
+/* The "Pulse" state for the global SMS trigger */
+.social-icon.is-pulsing {
+  animation: var(--animate-pulse-burst);
+}
+
+.social-link:hover, .social-link.is-active {
+  & .glitch-cyan { animation: var(--animate-glitch-cyan); }
+  & .glitch-magenta { animation: var(--animate-glitch-magenta); }
+  & .social-label {
+    color: white;
+  }
+  & .main-icon {
+    @apply opacity-100;
+  }
+}
+
+.video-wrapper {
+  @apply transition-all duration-700;
+  filter: grayscale(100%);
+}
+
+.video-wrapper:hover, .video-wrapper.is-active {
+  filter: grayscale(0%);
 }

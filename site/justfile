@@ -10,12 +10,13 @@ target_arch := if arch == "aarch64" { "arm64" } \
                else if arch == "x86_64" { "x64" } \
                else { error("Unsupported architecture") }
 
-platform_arch := if arch() == "aarch64" { "arm64" } else { "x64" }
-
 binary_name := "tailwindcss-" + platform + "-" + target_arch
 tw_bin := "./tailwindcss"
 css_input := "css/input.css"
 css_output := "static/css/styles.css"
+
+wasm_dir := "../rust/pulse-wasm"
+wasm_output := "site/static/pkg"
 
 # Default command: show recipes
 default:
@@ -34,7 +35,7 @@ serve:
     zola serve
 
 # One-time build for production
-build:
+build: build-wasm
     @echo "Building production assets..."
     # If the binary doesn't exist (e.g., in CI), download it first
     @if [ ! -f {{tw_bin}} ]; then just update-tw; fi
@@ -51,3 +52,8 @@ update-tw:
     curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/{{binary_name}}
     chmod +x {{binary_name}}
     mv {{binary_name}} {{tw_bin}}
+
+build-wasm:
+    @echo "Compiling WASM..."
+    wasm-pack build {{wasm_dir}} --target web --out-dir ../../{{wasm_output}}
+
