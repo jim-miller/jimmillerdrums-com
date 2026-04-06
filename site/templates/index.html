@@ -37,8 +37,7 @@
             <div class="flex flex-wrap gap-x-8 gap-y-6">
               {% for social in config.extra.social_media %}
                 <a href="{{ social.url }}" 
-                  class="social-link group relative flex items-center gap-2 text-zinc-500"
-                  style="--hover-brand-color: {{ social.brand_color }}"> 
+                  class="social-link group relative flex items-center gap-2 text-zinc-500"> 
                     <span class="relative size-6 flex items-center justify-center">
                         <svg class="glitch-cyan absolute size-5 fill-[#00ffff] opacity-0 pointer-events-none" viewBox="0 0 24 24">
                             <path d="{{ social.icon_path }}"/>
