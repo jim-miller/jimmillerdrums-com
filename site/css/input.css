@@ -19,11 +19,6 @@
   }
 }
 
-/* The "Pulse" state for the global SMS trigger */
-.social-icon.is-pulsing {
-  animation: var(--animate-pulse-burst);
-}
-
 .social-link:hover, .social-link.is-active {
   & .glitch-cyan { animation: var(--animate-glitch-cyan); }
   & .glitch-magenta { animation: var(--animate-glitch-magenta); }
