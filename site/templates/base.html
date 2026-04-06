@@ -14,6 +14,17 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path='apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="192x192" href="{{ get_url(path='android-chrome-192x192.png') }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ get_url(path='android-chrome-512x512.png') }}">
+    <script type="module">
+        import init from '{{ get_url(path="pkg/pulse_wasm.js") | safe }}';
+
+        (async () => {
+            try {
+                await init();
+            } catch (error) {
+                console.error('Failed to initialize pulse_wasm.', error);
+            }
+        })();
+    </script>
 </head>
 <body class="bg-zinc-950 text-white">
     {% block content %}{% endblock content %}
