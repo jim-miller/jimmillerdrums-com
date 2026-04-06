@@ -16,7 +16,14 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{{ get_url(path='android-chrome-512x512.png') }}">
     <script type="module">
         import init from '{{ get_url(path="pkg/pulse_wasm.js") | safe }}';
-        init();
+
+        (async () => {
+            try {
+                await init();
+            } catch (error) {
+                console.error('Failed to initialize pulse_wasm.', error);
+            }
+        })();
     </script>
 </head>
 <body class="bg-zinc-950 text-white">
